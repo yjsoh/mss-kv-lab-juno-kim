@@ -7,7 +7,28 @@ extern "C" {
 
 #define MAX_VAL_LEN 64
 
-typedef struct {} pmkv;
+typedef char* HKey;
+typedef char* HVal;
+typedef u_int8_t ValSize;
+
+struct HashTable {
+    HKey *keymap;
+    HVal *valmap;
+    ValSize *sizemap;
+    u_int64_t cap;
+    u_int64_t size;
+
+	HKey (*hash)(const char *key);
+	HVal (*get)(HKey key);
+	u_int64_t (*insert)(HKey key, HVal val);
+	u_int64_t (*remove)(HKey key);
+};
+
+typedef struct {
+    void *data;
+    u_int64_t fsize;
+    struct HashTable table;
+} pmkv;
 
 pmkv* pmkv_open(const char *path, size_t pool_size, int force_create);
 void pmkv_close(pmkv *kv);
